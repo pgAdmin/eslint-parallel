@@ -10,7 +10,7 @@ npm install eslint-parallel
 ## Access CLI
 
 ```command
-eslint-parallel src/js/**
+node_modules/.bin/eslint-parallel src/js/**
 ```
 
 ## Options
