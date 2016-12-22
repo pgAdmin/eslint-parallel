@@ -20,7 +20,7 @@ import { formatResults } from './formatter';
 const cpuCount = os.cpus().length;
 
 function getIgnorePatterns(options) {
-  let ignorePath = path.join(process.cwd(), '.eslintignore');
+  let ignorePath = path.join(options.cwd || process.cwd(), '.eslintignore');
   try {
     const ignore = fs.readFileSync(
       ignorePath, 'utf8'
@@ -35,7 +35,22 @@ function getIgnorePatterns(options) {
   }
 }
 
-function getFilesByPatterns(patterns, ignore) {
+function hasEslintCache(options) {
+  const cacheLocation = (
+    options.cacheFile || options.cacheLocation || path.join(
+      options.cwd || process.cwd(), '.eslintcache'
+    )
+  );
+  try {
+    fs.accessSync(path.resolve(cacheLocation), fs.F_OK);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function getFilesByPatterns(patterns, options) {
+  const ignore = getIgnorePatterns(options);
   let files = [];
 
   patterns.forEach(pattern => {
@@ -55,7 +70,7 @@ function getFilesByPatterns(patterns, ignore) {
       const path = isFolder ? `${pattern.replace(/\'|\"|\/$/g, '')}/**` :
         pattern.replace(/\'|\"|\/$/g, '');
       const newFiles = glob.sync(
-        path, { cwd: process.cwd(), nodir: true, ignore }
+        path, { cwd: options.cwd || process.cwd(), nodir: true, ignore }
       );
       files = files.concat(newFiles);
     }
@@ -105,10 +120,12 @@ export default class Linter {
   execute(patterns) {
     return new Promise((resolve, reject) => {
       const files = getFilesByPatterns(
-        patterns, getIgnorePatterns(this._options)
+        patterns, this._options
       );
 
-      if (files.length > 50 && cpuCount >= 2) {
+      const hasCache = hasEslintCache(this._options);
+
+      if (!hasCache && files.length > 50 && cpuCount >= 2) {
         // too many items, need to spawn process (if machine has multi-core)
         const totalCount = {
           errorCount: 0,

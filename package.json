@@ -1,6 +1,6 @@
 {
   "name": "eslint-parallel",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "lib/linter.js",
   "description": "Tiny eslint wrapper to allow executing javascript linting in parallel.",
   "author": "Alan Souza",
