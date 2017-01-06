@@ -160,10 +160,13 @@ export default class Linter {
 }
 
 process.on('message', ({options, files}) => {
-  new Linter(options).run(files).then((report) => {
-    process.send(report);
-  }, (err) => {
-    console.log(err);
-    process.exit(1);
-  });
+  // make sure to ignore message to other nested processes
+  if (files) {
+    new Linter(options).run(files).then((report) => {
+      process.send(report);
+    }, (err) => {
+      console.log(err);
+      process.exit(1);
+    });
+  }
 });
