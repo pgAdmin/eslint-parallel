@@ -26,7 +26,7 @@ See [ESLint Docs](http://eslint.org/docs/user-guide/command-line-interface) for 
     cwd: process.cwd()
   }).execute(['src/js/**']).then(
     (result) => {
-      const failed = result.errorCount > 1 || result.warningCount > 1;
+      const failed = result.errorCount || result.warningCount;
 
       if (failed) {
         // failed
