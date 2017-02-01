@@ -1,6 +1,7 @@
 pipeline:
   build:
-    image: node:4.4
+    image: kkarczmarczyk/node-yarn:6.9-slim
     commands:
-      - npm install --quiet
-      - npm run build
+      - cd ui
+      - yarn install
+      - yarn run build
