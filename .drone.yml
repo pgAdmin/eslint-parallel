@@ -2,6 +2,5 @@ pipeline:
   build:
     image: kkarczmarczyk/node-yarn:6.9-slim
     commands:
-      - cd ui
       - yarn install
       - yarn run build
