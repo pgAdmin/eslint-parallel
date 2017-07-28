@@ -107,11 +107,11 @@ export default class Linter {
     return new Promise((resolve) => {
       const report = this._engine.executeOnFiles(files);
       if (this._options.fix) {
-        this._engine.outputFixes(report);
+        CLIEngine.outputFixes(report);
       }
 
       if (this._options.quiet) {
-        report.results = this._engine.getErrorResults(report.results);
+        report.results = CLIEngine.getErrorResults(report.results);
       }
       resolve(report);
     });
