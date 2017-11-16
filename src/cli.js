@@ -44,7 +44,7 @@ if (cliOptions.version) {
 } else {
   new Linter(translateOptions(cliOptions)).execute(cliOptions._).then(
     (result) => {
-      const failed = result.errorCount > 1 || result.warningCount > 1;
+      const failed = result.errorCount || result.warningCount;
 
       if (failed) {
         console.log(formatTotal(result));
