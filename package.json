@@ -1,6 +1,6 @@
 {
   "name": "eslint-parallel",
-  "version": "0.3.2",
+  "version": "1.0.0",
   "main": "lib/linter.js",
   "description": "Tiny eslint wrapper to allow executing javascript linting in parallel.",
   "author": "Alan Souza",
@@ -29,6 +29,7 @@
     "eslint": ">=5.0.0"
   },
   "scripts": {
-    "build": "node_modules/.bin/babel src --out-dir lib --copy-files --loose-mode"
+    "build": "node_modules/.bin/babel src --out-dir lib --copy-files --loose-mode",
+    "prepublishOnly": "npm run build"
   }
 }
