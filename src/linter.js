@@ -10,6 +10,7 @@ import { fork } from 'child_process';
 * NPM dependencies
 **/
 import { CLIEngine } from 'eslint';
+import { listFilesToProcess } from 'eslint/lib/util/glob-utils.js';
 import glob from 'glob';
 
 /**
@@ -18,22 +19,6 @@ import glob from 'glob';
 import { formatResults } from './formatter';
 
 const cpuCount = os.cpus().length;
-
-function getIgnorePatterns(options) {
-  let ignorePath = path.join(options.cwd || process.cwd(), '.eslintignore');
-  try {
-    const ignore = fs.readFileSync(
-      ignorePath, 'utf8'
-    ).trim().split('\n');
-
-    if (options.ignorePattern) {
-      ignore.push(options.ignorePattern);
-    }
-    return ignore;
-  } catch (e) {
-    return [];
-  }
-}
 
 function hasEslintCache(options) {
   const cacheLocation = (
@@ -47,36 +32,6 @@ function hasEslintCache(options) {
   } catch (e) {
     return false;
   }
-}
-
-function getFilesByPatterns(patterns, options) {
-  const ignore = getIgnorePatterns(options);
-  let files = [];
-
-  patterns.forEach(pattern => {
-    let isFile = false;
-    let isFolder = false;
-    try {
-      const stats = fs.lstatSync(pattern);
-      isFile = stats.isFile();
-      isFolder = stats.isDirectory();
-    } catch (e) {
-      //no-op
-    }
-
-    if (isFile) {
-      files.push(pattern);
-    } else {
-      const path = isFolder ? `${pattern.replace(/\'|\"|\/$/g, '')}/**` :
-        pattern.replace(/\'|\"|\/$/g, '');
-      const newFiles = glob.sync(
-        path, { cwd: options.cwd || process.cwd(), nodir: true, ignore }
-      );
-      files = files.concat(newFiles);
-    }
-  });
-
-  return files;
 }
 
 function eslintFork(options, files) {
@@ -119,9 +74,9 @@ export default class Linter {
 
   execute(patterns) {
     return new Promise((resolve, reject) => {
-      const files = getFilesByPatterns(
+      const files = listFilesToProcess(
         patterns, this._options
-      );
+      ).map(f => f.filename);
 
       const hasCache = hasEslintCache(this._options);
 
