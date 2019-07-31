@@ -6,9 +6,8 @@ export function formatTotal(results) {
   const problemLabel = total && total === 1 ? 'problem' : 'problems';
   const errorLabel = total && total === 1 ? 'error' : 'errors';
   const warningLabel = total && total === 1 ? 'warning' : 'warnings';
-  return chalk.red.bold(
-    `\u2716 ${total} ${problemLabel} (${results.errorCount} ${errorLabel}, ${results.warningCount} ${warningLabel})\n`
-  );
+  const text = `${total} ${problemLabel} (${results.errorCount} ${errorLabel}, ${results.warningCount} ${warningLabel})\n`
+  return results.errorCount > 0 ? chalk.red.bold(`\u2716 ${text}`) : results.warningCount > 0 ? chalk.yellow.bold(`\u2716 ${text}`) : ` ${text}`;
 }
 
 export function formatResults(results) {
