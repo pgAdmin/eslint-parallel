@@ -10,7 +10,7 @@ import { fork } from 'child_process';
 * NPM dependencies
 **/
 import { CLIEngine } from 'eslint';
-import { listFilesToProcess } from 'eslint/lib/util/glob-utils.js';
+import { FileEnumerator } from 'eslint/lib/cli-engine/file-enumerator.js'
 import glob from 'glob';
 
 /**
@@ -74,9 +74,8 @@ export default class Linter {
 
   execute(patterns) {
     return new Promise((resolve, reject) => {
-      const files = listFilesToProcess(
-        patterns, this._options
-      ).map(f => f.filename);
+	  const fileEnumerator = new FileEnumerator();
+	  const files = [ ...fileEnumerator.iterateFiles(['src']) ].map(f => f.filePath);
 
       const hasCache = hasEslintCache(this._options);
 
