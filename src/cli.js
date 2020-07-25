@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-require('babel-register');
+require('@babel/register');
 
 /**
 * NPM dependencies
@@ -31,7 +31,8 @@ function translateOptions(cliOptions) {
     cacheFile: cliOptions.cacheFile,
     cacheLocation: cliOptions.cacheLocation,
     fix: cliOptions.fix,
-    allowInlineConfig: cliOptions.inlineConfig
+    allowInlineConfig: cliOptions.inlineConfig,
+    reportUnusedDisableDirectives: cliOptions.reportUnusedDisableDirectives
   };
 }
 
@@ -44,10 +45,10 @@ if (cliOptions.version) {
 } else {
   new Linter(translateOptions(cliOptions)).execute(cliOptions._).then(
     (result) => {
-      const failed = result.errorCount || result.warningCount;
+      const failed = result.errorCount || (!cliOptions.quiet && result.warningCount);
+      console.log(formatTotal(result));
 
       if (failed) {
-        console.log(formatTotal(result));
         process.exit(1);
       } else {
         process.exit(0);
