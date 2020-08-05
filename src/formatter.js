@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import stripAnsi from 'strip-ansi';
 import table from 'text-table';
 
 export function formatTotal(results) {
@@ -6,9 +7,8 @@ export function formatTotal(results) {
   const problemLabel = total && total === 1 ? 'problem' : 'problems';
   const errorLabel = total && total === 1 ? 'error' : 'errors';
   const warningLabel = total && total === 1 ? 'warning' : 'warnings';
-  return chalk.red.bold(
-    `\u2716 ${total} ${problemLabel} (${results.errorCount} ${errorLabel}, ${results.warningCount} ${warningLabel})\n`
-  );
+  const text = `${total} ${problemLabel} (${results.errorCount} ${errorLabel}, ${results.warningCount} ${warningLabel})\n`;
+  return results.errorCount > 0 ? chalk.red.bold(`\u2716 ${text}`) : results.warningCount > 0 ? chalk.yellow.bold(`\u2716 ${text}`) : ` ${text}`;
 }
 
 export function formatResults(results) {
@@ -46,13 +46,13 @@ export function formatResults(results) {
       {
         align: ['', 'r', 'l'],
         stringLength(str) {
-          return chalk.stripColor(str).length;
+          return stripAnsi(str).length;
         }
       }
     ).split('\n').map(el => el.replace(/(\d+)\s+(\d+)/, (m, p1, p2) => chalk.dim(`${p1}:${p2}`))).join('\n')}\n\n`;
   });
 
   return output;
-};
+}
 
 export default { formatResults, formatTotal };

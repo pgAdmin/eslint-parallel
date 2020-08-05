@@ -3,22 +3,36 @@
 **/
 import fs from 'fs';
 import path from 'path';
-import os from 'os';
 import { fork } from 'child_process';
 
 /**
 * NPM dependencies
 **/
 import { CLIEngine } from 'eslint';
-import { listFilesToProcess } from 'eslint/lib/util/glob-utils.js';
-import glob from 'glob';
+import { FileEnumerator } from 'eslint/lib/cli-engine/file-enumerator';
+import { CascadingConfigArrayFactory } from 'eslint/lib/cli-engine/cascading-config-array-factory';
 
 /**
 * Local dependencies
 **/
 import { formatResults } from './formatter';
 
-const cpuCount = os.cpus().length;
+const cpuCount = Number(process.env.ESLINT_CPU_COUNT) ?? os.cpus().length;
+
+function listFilesToProcess(patterns, options) {
+  return Array.from(
+    new FileEnumerator({
+      ...options,
+      configArrayFactory: new CascadingConfigArrayFactory({
+        ...options,
+
+        // Disable "No Configuration Found" error.
+        useEslintrc: false
+      })
+    }).iterateFiles(patterns),
+    ({ filePath, ignored }) => ({ filename: filePath, ignored })
+  );
+}
 
 function hasEslintCache(options) {
   const cacheLocation = (
@@ -86,7 +100,7 @@ export default class Linter {
           errorCount: 0,
           warningCount: 0
         };
-        const chunckedPromises = [];
+        const chunkedPromises = [];
         const chunkSize = Math.ceil(files.length / cpuCount);
         for (let i = 0; i < files.length; i += chunkSize) {
           const chunkedPaths = files.slice(i, i + chunkSize);
@@ -97,9 +111,9 @@ export default class Linter {
             totalCount.errorCount += report.errorCount;
             totalCount.warningCount += report.warningCount;
           });
-          chunckedPromises.push(chunckedPromise);
+          chunkedPromises.push(chunckedPromise);
         }
-        Promise.all(chunckedPromises).then(() => {
+        Promise.all(chunkedPromises).then(() => {
           resolve(totalCount);
         });
       } else {
