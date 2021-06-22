@@ -29,7 +29,6 @@
     "eslint": ">=6.1.0"
   },
   "scripts": {
-    "postinstall": "node_modules/.bin/babel src --out-dir lib --copy-files --loose-mode",
     "build": "node_modules/.bin/babel src --out-dir lib --copy-files --loose-mode",
     "prepublishOnly": "npm run build"
   }
