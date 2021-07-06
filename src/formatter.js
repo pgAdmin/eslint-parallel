@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import table from 'text-table';
+import stripAnsi from 'strip-ansi';
 
 export function formatTotal(results) {
   const total = results.errorCount + results.warningCount;
@@ -46,7 +47,7 @@ export function formatResults(results) {
       {
         align: ['', 'r', 'l'],
         stringLength(str) {
-          return chalk.stripColor(str).length;
+          return stripAnsi(str).length;
         }
       }
     ).split('\n').map(el => el.replace(/(\d+)\s+(\d+)/, (m, p1, p2) => chalk.dim(`${p1}:${p2}`))).join('\n')}\n\n`;
