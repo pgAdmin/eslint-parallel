@@ -15,7 +15,6 @@
     "eslint-parallel": "./lib/cli.js"
   },
   "dependencies": {
-    "@babel/register": "^7.17.7",
     "chalk": "^4.1.2",
     "eslint": "^8.17.0",
     "strip-ansi": "^6",
@@ -30,7 +29,7 @@
     "eslint": ">=6.1.0"
   },
   "scripts": {
-    "build": "node_modules/.bin/babel src --out-dir lib --copy-files",
+    "build": "babel src --out-dir lib --copy-files --delete-dir-on-start",
     "prepublishOnly": "npm run build"
   }
 }
