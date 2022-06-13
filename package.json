@@ -15,22 +15,22 @@
     "eslint-parallel": "./lib/cli.js"
   },
   "dependencies": {
-    "@babel/register": "^7.10.5",
-    "chalk": "^4.1.0",
-    "eslint": "^6.1.0",
-    "strip-ansi": "^7.0.0",
+    "chalk": "^4.1.2",
+    "eslint": "^8.17.0",
+    "strip-ansi": "^6",
     "text-table": "^0.2.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.10.5",
-    "@babel/preset-env": "^7.10.4"
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.18.5",
+    "@babel/eslint-parser": "^7.18.2",
+    "@babel/preset-env": "^7.18.2"
   },
   "peerDependencies": {
     "eslint": ">=6.1.0"
   },
   "scripts": {
-    "build": "node_modules/.bin/babel src --out-dir lib --copy-files",
+    "build": "babel src --out-dir lib --copy-files --delete-dir-on-start",
     "prepublishOnly": "npm run build"
   }
 }
